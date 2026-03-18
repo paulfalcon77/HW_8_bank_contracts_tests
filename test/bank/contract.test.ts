@@ -1,18 +1,21 @@
 import { DepositContract } from '../../src/bank/DepositContract'
 import { LoanContract } from '../../src/bank/LoanContract'
 import { InsuranceContract } from '../../src/bank/InsuranceContract'
+import { BaseContract} from '../../src/bank/BaseContract'
 
 describe('Contracts Tests', () => {
-
+  let base: BaseContract
   let deposit: DepositContract
   let loan: LoanContract
   let insurance: InsuranceContract
 
   beforeEach(() => {
+    base = new BaseContract("id_0", "Pavel", false)
     deposit = new DepositContract("id_1", "Morris", false, 1000, 5)
     loan = new LoanContract("id_2", "Anna", false, 5000, 500, 12)
     insurance = new InsuranceContract("id_3", "Bob", false, "forHealth", 250, 2)
 
+    base.activate()
     deposit.activate()
     loan.activate()
     insurance.activate()
@@ -20,13 +23,23 @@ describe('Contracts Tests', () => {
   })
 
   afterEach(() => {
+    base.deactivate()
     deposit.deactivate()
     loan.deactivate()
     insurance.deactivate()
 
+    console.log(`base ${base.contractId} deactivated.`)
     console.log(`deposit ${deposit.contractId} deactivated.`)
     console.log(`loan ${loan.contractId} deactivated.`)
     console.log(`insurance ${insurance.contractId} deactivated.`)
+  })
+
+  test("Base Contract", () => {
+    expect(base.isActive).toBe(true)
+    expect(base.contractId).toBe("id_0")
+    expect(base.clientName).toBe("Pavel")
+    base.deactivate()
+    expect(base.isActive).toBe(false)
   })
 
   test("Deposit Contract calculate interest", () => {
